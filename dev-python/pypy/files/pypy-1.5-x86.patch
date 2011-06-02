@@ -1,0 +1,12 @@
+--- pypy/translator/platform/linux.py	2011-04-30 17:18:50.000000000 +0300
++++ pypy/translator/platform/linux_fixed.py	2011-05-05 00:52:06.895999995 +0300
+@@ -29,9 +29,6 @@
+     shared_only = ()    # it seems that on 32-bit linux, compiling with -fPIC
+                         # gives assembler that asmgcc is not happy about.
+ 
+-    def library_dirs_for_libffi_a(self):
+-        # places where we need to look for libffi.a
+-        return self.library_dirs_for_libffi() + ['/usr/lib']
+ 
+ 
+ class Linux64(BaseLinux):

@@ -1,0 +1,11 @@
+--- /etc/init.d/tinyerp.old 2008-09-19 19:36:09.000000000 +0200
++++ /etc/init.d/tinyerp       2008-09-20 17:56:42.000000000 +0200
+@@ -14,7 +14,7 @@
+        [ -n "${SERVER_PORT}" ] && SERVER_OPTS="${SERVER_OPTS} --db_port=${SERVER_PORT}"
+                                                                
+        ebegin "Starting TinyERP"
+-       start-stop-daemon --start --quiet --background --chuid terp:terp --pidfile=/var/run/tinyerp/tinyerp.pid --startas /usr/bin/tinyerp-server --exec /usr/bin/python -- ${SERVER_OPTS} --pidfile=/var/run/tinyerp/tinyerp.pid --logfile=/var/log/tinyerp/tinyerp.log
++       start-stop-daemon --start --quiet --background --chuid terp:terp --pidfile=/var/run/tinyerp/tinyerp.pid --exec /usr/bin/tinyerp-server -- ${SERVER_OPTS} --pidfile=/var/run/tinyerp/tinyerp.pid --logfile=/var/log/tinyerp/tinyerp.log
+        eend $?
+ }
+ 

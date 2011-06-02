@@ -1,0 +1,18 @@
+--- pypy/translator/goal/translate.py	2011-03-29 12:16:28.345000030 +0200
++++ pypy/translator/goal/translate.py_fixed	2011-03-29 12:17:26.196000030 +0200
+@@ -248,7 +248,6 @@
+             log.event("batch mode, not calling interactive helpers")
+             return
+         
+-        log.event("start debugger...")
+ 
+         if translateconfig.view:
+             try:
+@@ -259,7 +258,6 @@
+             page = graphpage.TranslatorPage(t1, translateconfig.huge)
+             page.display_background()
+ 
+-        pdb_plus_show.start(tb)
+ 
+     try:
+         drv = driver.TranslationDriver.from_targetspec(targetspec_dic, config, args,

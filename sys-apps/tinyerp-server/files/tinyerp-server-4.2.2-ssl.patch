@@ -1,0 +1,70 @@
+diff -urN tinyerp-server-4.2.2.old/bin/ssl/SecureXMLRPCServer.py tinyerp-server-4.2.2/bin/ssl/SecureXMLRPCServer.py
+--- tinyerp-server-4.2.2.old/bin/ssl/SecureXMLRPCServer.py	2008-02-06 10:19:22.000000000 +0100
++++ tinyerp-server-4.2.2/bin/ssl/SecureXMLRPCServer.py	2008-02-28 11:21:31.000000000 +0100
+@@ -10,6 +10,7 @@
+ This code is in the public domain and is
+ provided AS-IS WITH NO WARRANTY WHATSOEVER.
+ """
++import tools
+ import SocketServer
+ import os, socket, sys
+ import SimpleXMLRPCServer
+@@ -76,8 +77,18 @@
+         ctx.set_options(SSL.OP_NO_SSLv2)
+ 
+         dir = os.path.join(os.getcwd(), os.path.dirname(sys.argv[0]))
+-        ctx.use_privatekey_file (os.path.join(dir, 'server.pkey'))
+-        ctx.use_certificate_file(os.path.join(dir, 'server.cert'))
++
++	## Set SSL key file
++	ssl_key_file = os.path.join(dir, 'server.pkey')
++	if tools.config['ssl_key_file']:
++		ssl_key_file = tools.config['ssl_key_file']
++        ctx.use_privatekey_file (ssl_key_file)
++
++	## Set SSL certificate file
++	ssl_cert_file = os.path.join(dir, 'server.cert')
++	if tools.config['ssl_cert_file']:
++		ssl_cert_file = tools.config['ssl_cert_file']
++        ctx.use_certificate_file(ssl_cert_file)
+ 
+         self.socket = SSLBugFix(SSL.Connection(ctx, socket.socket(self.address_family,
+                                                                   self.socket_type)))
+@@ -109,5 +120,7 @@
+         self.funcs = {}
+         self.logRequests = logRequests
+         self.instance = None
++        self.allow_none = False
++        self.encoding = None
+         SecureTCPServer.__init__(self, addr, requestHandler)
+ 
+diff -urN tinyerp-server-4.2.2.old/bin/tools/config.py tinyerp-server-4.2.2/bin/tools/config.py
+--- tinyerp-server-4.2.2.old/bin/tools/config.py	2008-02-06 10:19:22.000000000 +0100
++++ tinyerp-server-4.2.2/bin/tools/config.py	2008-02-28 11:20:27.000000000 +0100
+@@ -60,6 +60,8 @@
+ 			'pidfile': None,
+ 			'logfile': None,
+ 			'secure': False,
++			'ssl_cert_file': None,
++			'ssl_key_file': None,
+ 			'smtp_server': 'localhost',
+ 			'smtp_user': False,
+ 			'smtp_password': False,
+@@ -94,6 +96,8 @@
+ 		parser.add_option('--debug', dest='debug_mode', action='store_true', default=False, help='enable debug mode')
+ 		parser.add_option("--assert-exit-level", dest='assert_exit_level', help="specify the level at which a failed assertion will stop the server " + str(assert_exit_levels))
+ 		parser.add_option("-S", "--secure", dest="secure", action="store_true", help="launch server over https instead of http", default=False)
++		parser.add_option("-C", "--ssl_cert_file", dest="ssl_cert_file", help="specify the path to the server SSL certificate file"),
++		parser.add_option("-K", "--ssl_key_file", dest="ssl_key_file", help="specify the path to the server SSL key file"),
+ 		parser.add_option('--smtp', dest='smtp_server', default='', help='specify the SMTP server for sending email')
+ 		parser.add_option('--smtp-user', dest='smtp_user', default='', help='specify the SMTP username for sending email')
+ 		parser.add_option('--smtp-password', dest='smtp_password', default='', help='specify the SMTP password for sending email')
+@@ -147,7 +151,7 @@
+                     self.options['pidfile'] = False
+ 		
+ 		for arg in ('interface', 'port', 'db_name', 'db_user', 'db_password', 'db_host',
+-				'db_port', 'logfile', 'pidfile', 'secure', 'smtp_server', 'smtp_user', 'smtp_password', 'price_accuracy', 'netinterface', 'netport', 'db_maxconn'):
++				'db_port', 'logfile', 'pidfile', 'secure', 'ssl_cert_file', 'ssl_key_file', 'smtp_server', 'smtp_user', 'smtp_password', 'price_accuracy', 'netinterface', 'netport', 'db_maxconn'):
+ 			if getattr(opt, arg):
+ 				self.options[arg] = getattr(opt, arg)
+ 
